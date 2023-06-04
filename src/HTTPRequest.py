@@ -6,7 +6,7 @@ class HTTPRequest:
         first = data.pop(0).split(" ")
 
         header_dict["method"] = first[0]
-        header_dict[""]
+        header_dict["URL"] = first[1]
         header_dict["version"] = first[2]
 
         for i in data:

@@ -1,6 +1,7 @@
 from socket import *
 import logging
 import signal, sys
+from HTTPRequest import HTTPRequest
 
 class Server:    
     def __init__(self):
@@ -13,6 +14,8 @@ class Server:
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         self.logger.addHandler(stream_handler)
+
+        self.httpRequest = HTTPRequest()
         
     def listen(self, host='', port=8080, max_clients=5, size=1024):
         with self.socket:            
@@ -25,12 +28,14 @@ class Server:
                     data = client.recv(size).decode()
 
                     if len(data):
-                        self.logger.info(f"received data '{data}' from {addr}")
-                        self.echo(client, data)
+                        response = "HTTP/1.1 200 OK \r\n\r\n <p>hello world</p>"
+                        self.logger.info(f"received data from {addr}")
+                        print(self.httpRequest.parse(data))
+                        self.response(client, response)
                         
                     else:
                         self.logger.warning("nothing to read from data.")
-                        client.sendall("received nothing from client.".encode())
+                        client.sendall("GET HTTP/1.1 200".encode())
 
                     client.close()
                     
@@ -39,6 +44,9 @@ class Server:
 
     def echo(self, client, data):
         client.sendall("hi from server".encode())
+
+    def response(self, client, data):
+        client.sendall(data.encode())
 
         
 def exit_handler(signal, frame):
