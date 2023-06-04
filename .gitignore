@@ -3,3 +3,4 @@ Scripts
 ../.idea
 pyvenv.cfg
 .env
+venv
